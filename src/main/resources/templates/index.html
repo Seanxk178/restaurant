@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"  xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+<link rel="stylesheet" th:href="@{/layui/css/layui.css}">
+    <script th:src="@{/layui/layui.js}"></script>
+    <script th:src="@{/js/jquery-3.1.1.js}"></script>
+
+</head>
+<body class="layui-layout-body" overflow="hidden">
+<script th:inline="javascript">
+    var a=[[@{/}]];
+        console.log(/*[[@{相对地址}]]*/);
+        console.log(a);
+     layui.use('element', function(){
+            var element = layui.element;
+            element.on('nav(menu)', function(data){
+                var id = data.attr('id');
+                var url = data.attr('data-url');
+                var a_url=a+url;
+
+                console.log(a_url);
+               var exist=$(".layui-tab-title li[lay-id='"+data[0].id+"']").length;
+                    if(exist==0&id!=null){
+                        element.tabAdd('demo', {
+                            title: data[0].text
+                            , content: '<iframe scrolling="no" frameborder="0" src="'+url+'" style="width:100%;height:748px;" id="iframe"></iframe>'
+                            ,id: data[0].id
+                        });
+                   }
+
+                    element.tabChange('demo', data[0].id);
+
+
+            });
+
+        })
+</script>
+
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo"> 校园商城后台管理</div>
+
+        <!--退出部分-->
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item" >
+                <a href="javascript:" th:text="${activeUser.getUsercode()}">
+                    <!--<img src="http://t.cn/RCzsdCq" class="layui-nav-img">-->
+                  </a>
+                <dl class="layui-nav-child">-->
+                    <dd><a href="javascript:void(0);" id="upd">
+                        <input type="hidden" th:value="${activeUser.getUsercode()}" id="up">
+                        修改密码</a></dd>
+
+                    <!--<dd><a href="">安全设置</a></dd>-->
+                </dl>
+            </li>
+            <li class="layui-nav-item"><a href="logout">退出</a></li>
+        </ul>
+    </div>
+<!--退出部分结束-->
+
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree"  th:each="m:${activeUser.menus}" lay-filter="menu">
+                <li class="layui-nav-item">
+                    <a class="" href="javascript:void(0);" th:text="${m.name}"></a>
+                    <dl class="layui-nav-child" th:each="p:${activeUser.permissions}">
+                        <dd th:if="${p.id!=72}">
+                            <a href="javascript:;"  th:data-url="${p.url}" th:text="${p.name}"  th:id="${p.id}" th:if="${m.id==p.parentid }"></a>
+                        </dd>
+                        <dd th:if="${p.id==72}">
+                            <a th:href="${p.url}" th:text="${p.name}" th:if="${m.id==p.parentid}"></a>
+                        </dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <!--tab标签代码-->
+        <div class="layui-tab" lay-allowClose="true" lay-filter="demo">
+            <ul class="layui-tab-title">
+                <li class="layui-this" lay-id="11">首页</li>
+            </ul>
+            <div class="layui-tab-content">
+                <div class="layui-tab-item layui-show">
+                    <h1 style="position:absolute;margin-left:740px;margin-top:-370px;"th:text="'欢&nbsp;迎&nbsp;'+${activeUser.getUsercode()}+'登&nbsp;录'"></h1>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+
+    </div>
+</div>
+</body>
+</html>
+<script >
+    layui.use(['table','layer','form'], function() {
+        var table = layui.table;
+        var layer = layui.layer;
+        var form = layui.form;
+        var usercode=$("#up").val();
+            console.log(usercode);
+        $('#upd').on('click',function () {
+            layer.open({
+                title: '密码修改',
+                type: 2,
+                content: 'updPwd?usercode='+usercode,    // 设置跳转的url，跳转到对应的页面
+                area: ['400px','400px'],
+
+                yes: function (index,layero) {
+
+                    var formSubmit=layer.getChildFrame('form', index);
+
+                    submited.click();
+
+
+                }
+            });
+        });
+    })
+    </script>
+
+

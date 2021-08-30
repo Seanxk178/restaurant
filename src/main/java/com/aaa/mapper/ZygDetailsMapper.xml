@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aaa.mapper.ZygDetailsMapper">
+
+    <select id="details" parameterType="java.lang.Integer" resultType="java.util.Map">
+        select m.m_img,m.m_name,l.l_state,l.l_count,l_sum,l.l_price from orderdetail l,menus m WHERE l.o_id=#{o_id} and l.m_id=m.m_id
+    </select>
+    <select id="selcomments" parameterType="Map" resultType="Map">
+        select u.u_name,o.o_time,c.* from comments c,orders o,users u WHERE c.o_id=o.o_id and o.u_id=u.u_id
+        <if test="neginDate != '' and  endDate != ''">
+         and o.o_time BETWEEN #{neginDate} AND #{endDate}
+        </if>
+         group by o.o_time DESC limit #{start},#{limit}
+    </select>
+    <select id="selcommentsCount" resultType="Integer">
+        select count(c_id) from comments c,orders o where o.o_id=c.o_id
+        <if test="neginDate != '' and  endDate != ''">
+            and o.o_time BETWEEN #{neginDate} AND #{endDate}
+        </if>
+    </select>
+    <!--查询时间是否匹配-->
+    <select id="time" parameterType="Integer" resultType="Integer">
+        select COUNT(*) count from orders WHERE  TIMESTAMPDIFF(HOUR, o_time,NOW()) &lt; 24 and o_id = #{o_id}
+    </select>
+    <select id="getOrderLength"  parameterType="Integer" resultType="Integer">
+        SELECT (a-b) as num FROM (SELECT count(*) a from orderdetail WHERE o_id = #{o_id}) c,(SELECT count(*) b from orderdetail WHERE o_id = #{o_id} AND l_state =1) d
+    </select>
+    <select id="criticPast"  parameterType="Integer" resultType="Integer">
+        SELECT COUNT(*) num from comments WHERE o_id=#{o_id}
+    </select>
+    <!--添加评论-->
+    <insert id="addComment" parameterType="Map">
+        insert into comments(o_id,c_content,c_serve,c_menu,c_environment)VALUES(#{o_id},#{content},#{serve},#{menu},#{environment})
+    </insert>
+</mapper>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>表格</title>
+    <link rel="stylesheet" href="https://www.layuicdn.com/layui/css/layui.css">
+    <script src="https://www.layuicdn.com/layui/layui.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}">
+    <script th:src="@{/layui/layui.js}"></script>
+    <style>
+        .layui-table-cell{
+            text-align: center;
+            height: auto;
+            white-space: normal;
+        }
+        .layui-table img{
+            max-width: 100px;
+        }
+        /*.wbltable{*/
+            /*padding-bottom: 200px!important;*/
+            /*margin-bottom: 200px!important;*/
+        /*}*/
+    </style>
+
+</head>
+<style>
+</style>
+<body>
+<!--<div class="demoTable">-->
+    <!--搜索日期：-->
+    <!--<div class="layui-inline">-->
+        <!--<input class="layui-input" name="id" id="demoReload" autocomplete="off">-->
+    <!--</div>-->
+    <!--<div class="layui-inline">-->
+        <!--<input class="layui-input" name="id" id="demoReload1" autocomplete="off">-->
+    <!--</div>-->
+    <!--<button class="layui-btn" data-type="reload" id="searchBtn">搜索</button>-->
+<!--</div>-->
+
+<div>
+    <label class="layui-form-label">日期范围</label>
+    <div class="layui-input-inline">
+        <input type="text" class="layui-input" id="test6">
+    </div>
+    <button class="layui-btn" data-type="reload" id="searchBtn">搜索</button>
+</div>
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-group">
+    <button type="button" class="layui-btn" id="export">
+        <i class="iconfont icon-export"></i>导出
+    </button>
+    </div>
+</script>
+<table class="layui-hide wbltable" id="demo" lay-filter="test"></table>
+<script>
+    layui.use([ 'laypage', 'layer', 'table','laydate','jquery'], function(){
+        var laypage = layui.laypage //分页
+            ,layer = layui.layer //弹层
+            ,table = layui.table//表格
+            ,laydate = layui.laydate
+            ,$=layui.$;
+        var exportData=" ";
+        //日期范围
+        laydate.render({
+            elem: '#test6'
+            ,range:'~'
+        });
+        var listData=table.render({
+            elem: '#demo'
+            // ,height: 700
+            ,url: 'listData' //数据接口
+            ,title: '统计表'
+            ,page: true //开启分页
+            // ,toolbar: 'default' //开启工具栏，此处显示默认图标，可以自定义模板
+            ,toolbar:'#toolbarDemo'
+            ,defaultToolbar:[]
+            ,totalRow: true //开启合计行
+            ,limits:[2,3,4]
+            ,limit:2
+            //,height: 'full-20'
+            ,cols: [
+                [ //表头
+                // {type: 'checkbox', fixed: 'left'}
+                {field: 'numbers', title: 'ID', type:'numbers', width:'10%', sort: true, unresize:true,totalRowText:'合计'}
+                ,{field:'m_img', title:'图片',width:'20%',templet:"<div><img src='../upload/{{d.m_img}}'/></div>"}
+                ,{field:'o_time',title:'时间',width:'20%',templet:"<div>{{layui.util.toDateString(d.o_time, 'yyyy年MM月dd日')}}</div>"}
+                ,{field:'m_name', title:'菜名',width:'20%'}
+                ,{field: 'l_count', title: '数量', width:'15%',sort: true,totalRow:true}
+                ,{field: 'l_sum', title: '总额', width: '15%', sort: true,totalRow:true}
+            ]
+            ]
+            , id: 'listData'
+            ,done:function (res,curr,count) {
+                $("#export").on('click',function () {
+                    var text = $("#test6").val();
+                    $.ajax({
+                        type:"post",
+                        url:"AllData",
+                        data:{
+                            dataTime : text
+                        },
+                        async:false,
+                        dataType:'json',
+                        success:function (data) {
+                            exportData=data.data;
+                        }
+                    })
+                    table.exportFile(listData.config.id,exportData,'xls');
+                })
+            }
+        });
+
+
+        //分页
+        laypage.render({
+            elem: 'pageDemo' //分页容器的id
+            ,count: 100 //总页数
+            ,skin: '#1E9FFF' //自定义选中色值
+            //,skip: true //开启跳页
+            ,jump: function(obj, first){
+                if(!first){
+                    layer.msg('第'+ obj.curr +'页', {offset: 'b'});
+                }
+            }
+        });
+
+        //执行条件查询
+        /*条件查询按钮*/
+        var $ = layui.$;
+        $('#searchBtn').on('click', function(){
+            //获取输入框
+            var demoReload = $('#test6');
+            //执行重载
+            table.reload('listData', {
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+                ,where: {
+                    demoReload: demoReload.val()
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

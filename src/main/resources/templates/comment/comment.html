@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../layui/css/layui.css"  media="all">
+    <script src="../layui/layui.js" charset="utf-8"></script>
+    <script src="../js/jquery-3.1.1.js"></script>
+    <style>
+        .layui-table-cell{
+            height:48px;
+            line-height: 48px;
+        }
+        .layui-rate{
+            padding: 0px!important;
+        }
+    </style>
+</head>
+<body>
+    <!--<div>-->
+
+    <!--</div>-->
+    <div>
+        <label class="layui-form-label">日期范围</label>
+        <div class="layui-input-inline">
+            <input type="text" class="layui-input" id="test6" readonly="" placeholder="选择时间段">
+            <!--<button type="button" class="layui-btn">搜索</button>-->
+        </div>
+        <table id="de"></table>
+    </div>
+</body>
+<script>
+    var _self = this;
+    var negin='';
+    var end='';
+    layui.use(['table','rate','laydate'], function() {
+        var table = layui.table;
+        var rate = layui.rate;
+        var laydate = layui.laydate;
+        //日期范围
+        laydate.render({
+            elem: '#test6'
+            ,range: '~'
+            ,done: function(value, date){
+            //layer.alert('你选择的日期是：' + value + '<br>获得的对象是' + JSON.stringify(date));
+                if(value != '' && value != undefined){
+                    var str =  value.split('~');
+                    negin = str[0];
+                    end = str[1];
+                }else {
+                    negin = '';
+                    end = '';
+                }
+                console.log(negin);
+               // $.post('../zyg/selcommentsData',{neginDate:neginDate,endDate:endDate},function (data) {
+               //
+               // });
+                window.tableData();
+        }
+        });
+        var datas = [];
+        // $.ajax({
+        //     url: '',
+        //
+        //     async:false,
+        //     type: 'POST',
+        //     success: function (data) {
+        //         datas = data;
+        //         console.log(datas.length);
+        //     }
+        // });
+        //展示已知数据
+        window.tableData = function () {
+            table.render({
+
+                elem: '#de'
+                ,where: {neginDate: negin,endDate: end}
+                ,url: '../zyg/selcomments'
+
+                //,page:true
+                ,page: { //支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
+                    layout: ['limit', 'count', 'prev', 'page', 'next', 'skip'] //自定义分页布局
+                    //,curr: 5 //设定初始在第 5 页
+                    ,groups: 3 //只显示 1 个连续页码
+                    ,first:  '首页'//不显示首页
+                    ,last: '尾页' //不显示尾页
+                }
+                // ,request: {
+                //     page: page //页码的参数名称，默认：page
+                //     ,limit: limit  //每页数据量的参数名，默认：limit
+                //     ,neginDate :'111'
+                // }
+                // ,height: 'full-20'
+                // ,height: 315
+                ,limit: 1
+                ,limits:[1,2,3,4,5]
+                ,cols: [[ //标题栏
+                    {field:'numbers',  title: 'ID',type:'numbers'}
+                    ,{field:'u_name',  title: '用户名'}
+                    ,{field:'o_time',  title: '时间', templet : "<div>{{layui.util.toDateString(d.o_time, 'yyyy年MM月dd日 HH:mm:ss')}}</div>"}
+                    ,{field:'serve',  title: '服务评分',templet:function (d) {
+                            return '<div id="serve'+d.c_id+'"></div>'
+                        }}
+                    //,align:'center'
+                    ,{field:'menu',  title: '商品评分',templet:function (d) {
+                            return '<div id="menu'+d.c_id+'"></div>'
+                        }}
+                    ,{field:'environment',  title: '环境评分',templet:function (d) {
+                            return '<div id="environment'+d.c_id+'"></div>'
+                        }}
+                    ,{field: 'c_content', title: '内容', sort: true}
+                    //<button type="button" name="{{d.o_id}}" class="layui-btn layui-btn-xs" onClick="aaa()">消费详情</button>
+                    // ,{field: 'o_id', title: '查看详情', templet:'<div><button type="button" name="{{d.o_id}}" class="layui-btn layui-btn-xs aaa">消费详情</button></div>'}
+                ]],
+                done:function(res, curr, count){
+                    var data = res.data;//返回的json中data数据
+                    for (var item in data) {
+                        //服务评分
+                        rate.render({
+                            elem: '#serve'+data[item].c_id+''         //绑定元素
+                            , length: 5            //星星个数
+                            , value: data[item].c_serve             //初始化值
+                            , theme: '#f30808'     //颜色
+                            , half: false           //支持半颗星
+                            , text: true           //显示文本，默认显示 '3.5星'
+                            , readonly: true      //只读
+                        });
+                        //商品评分
+                        rate.render({
+                            elem: '#menu'+data[item].c_id+''         //绑定元素
+                            , length: 5            //星星个数
+                            , value: data[item].c_menu             //初始化值
+                            , theme: '#f30808'     //颜色
+                            , half: false           //支持半颗星
+                            , text: true           //显示文本，默认显示 '3.5星'
+                            , readonly: true      //只读
+                        });
+                        //环境评分
+                        rate.render({
+                            elem: '#environment'+data[item].c_id+''         //绑定元素
+                            , length: 5            //星星个数
+                            , value: data[item].c_environment             //初始化值
+                            , theme: '#f30808'     //颜色
+                            , half: false           //支持半颗星
+                            , text: true           //显示文本，默认显示 '3.5星'
+                            , readonly: true      //只读
+                        });
+                        // $('.aaa').on('click',function () {
+                        //     var o_id = $(this).prop('name');
+                        //     layer.open({
+                        //         title: '评论详情'
+                        //         ,content: '<div style="color: #00FFFF">可以填写任意的layer代码</div>'
+                        //     });
+                        // })
+                    }
+                }
+                // ,data: datas
+                ,skin: 'line' //表格风格
+                //,even: true
+                //,limits: [5, 7, 10]
+                //,limit: 5 //每页默认显示的数量
+            });
+        }
+        window.tableData();
+    });
+</script>
+</html>

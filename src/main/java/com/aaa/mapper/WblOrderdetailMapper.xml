@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aaa.mapper.WblOrderdetailMapper">
+    <select id="selectAll" resultType="map" parameterType="map">
+        SELECT  o.l_id,SUM(o.l_count) l_count,o.l_price,SUM(o.l_sum) l_sum,o.l_remarks,o.l_state,o.o_id,o.m_id,m.m_img,m.m_name,ord.o_time FROM orderdetail o ,orders ord , menus m  WHERE o.o_id=ord.o_id AND o.m_id=m.m_id GROUP BY o.m_id   ORDER BY l_count DESC  LIMIT #{begin},#{end}
+    </select>
+    <select id="selectMessage"  resultType="map" parameterType="map">
+        SELECT  o.l_id,SUM(o.l_count) l_count,o.l_price,SUM(o.l_sum) l_sum,o.l_remarks,o.l_state,o.o_id,o.m_id,m.m_img,m.m_name,ord.o_time FROM orderdetail o ,orders ord , menus m   WHERE  o.o_id=ord.o_id AND o.m_id=m.m_id
+        and ord.o_time between #{Obegin} and #{Oend} GROUP BY o.m_id   ORDER BY l_count DESC LIMIT #{begin},#{end}
+    </select>
+    <select id="selectCount" parameterType="Map" resultType="int">
+        select COUNT(*) from (select COUNT(l.m_id) from orderdetail l,orders o
+        <if test="Obegin != null and Obegin != '' and Oend != null and Oend != '' ">
+            WHERE l.o_id=o.o_id and o.o_time between #{Obegin} and #{Oend}
+         </if>
+         GROUP BY m_id) a
+    </select>
+
+    <select id="alldata" parameterType="Map" resultType="Map">
+        SELECT  o.l_id,SUM(o.l_count) l_count,o.l_price,SUM(o.l_sum) l_sum,m.m_name,ord.o_time FROM orderdetail o ,orders ord , menus m   WHERE  o.o_id=ord.o_id AND o.m_id=m.m_id
+        and ord.o_time
+        <if test="beginDate != null and beginDate != '' and endDate != null and endDate != '' ">
+          and ord.o_time between #{beginDate} and #{endDate}
+        </if>
+        GROUP BY o.m_id   ORDER BY l_count DESC
+    </select>
+
+</mapper>

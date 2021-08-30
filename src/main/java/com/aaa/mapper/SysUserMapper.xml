@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aaa.mapper.SysUserMapper" >
+  <resultMap id="BaseResultMap" type="SysUser" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="usercode" property="usercode" jdbcType="VARCHAR" />
+    <result column="username" property="username" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="salt" property="salt" jdbcType="VARCHAR" />
+    <result column="locked" property="locked" jdbcType="CHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, usercode, username, password, salt, locked
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="SysUserExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from sys_user
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null and pageSize != null and pageSize != 0">
+      limit #{startRow},#{pageSize}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from sys_user
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from sys_user
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="SysUserExample" >
+    delete from sys_user
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="SysUser" >
+    insert into sys_user (id, usercode, username,
+      password, salt, locked
+      )
+    values (#{id,jdbcType=VARCHAR}, #{usercode,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR},
+      #{password,jdbcType=VARCHAR}, #{salt,jdbcType=VARCHAR}, #{locked,jdbcType=CHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="SysUser" >
+    insert into sys_user
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="usercode != null" >
+        usercode,
+      </if>
+      <if test="username != null" >
+        username,
+      </if>
+      <if test="password != null" >
+        password,
+      </if>
+      <if test="salt != null" >
+        salt,
+      </if>
+      <if test="locked != null" >
+        locked,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="usercode != null" >
+        #{usercode,jdbcType=VARCHAR},
+      </if>
+      <if test="username != null" >
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="salt != null" >
+        #{salt,jdbcType=VARCHAR},
+      </if>
+      <if test="locked != null" >
+        #{locked,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="SysUserExample" resultType="java.lang.Integer" >
+    select count(*) from sys_user
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update sys_user
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.usercode != null" >
+        usercode = #{record.usercode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.username != null" >
+        username = #{record.username,jdbcType=VARCHAR},
+      </if>
+      <if test="record.password != null" >
+        password = #{record.password,jdbcType=VARCHAR},
+      </if>
+      <if test="record.salt != null" >
+        salt = #{record.salt,jdbcType=VARCHAR},
+      </if>
+      <if test="record.locked != null" >
+        locked = #{record.locked,jdbcType=CHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update sys_user
+    set id = #{record.id,jdbcType=VARCHAR},
+      usercode = #{record.usercode,jdbcType=VARCHAR},
+      username = #{record.username,jdbcType=VARCHAR},
+      password = #{record.password,jdbcType=VARCHAR},
+      salt = #{record.salt,jdbcType=VARCHAR},
+      locked = #{record.locked,jdbcType=CHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="SysUser" >
+    update sys_user
+    <set >
+      <if test="usercode != null" >
+        usercode = #{usercode,jdbcType=VARCHAR},
+      </if>
+      <if test="username != null" >
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="salt != null" >
+        salt = #{salt,jdbcType=VARCHAR},
+      </if>
+      <if test="locked != null" >
+        locked = #{locked,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="SysUser" >
+    update sys_user
+    set usercode = #{usercode,jdbcType=VARCHAR},
+      username = #{username,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      salt = #{salt,jdbcType=VARCHAR},
+      locked = #{locked,jdbcType=CHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <select id="findUserByName" parameterType="String" resultType="SysUser">
+    select * from sys_user where username = #{username}
+  </select>
+  <!--用户查询-->
+  <select id="sysUserList" resultMap="selSysUser" parameterType="SysUserExample">
+      SELECT u.id,u.usercode,u.username,u.password,u.salt,u.locked,r.name from sys_user u left join sys_user_role ur on u.id=ur.sys_user_id LEFT JOIN sys_role r on ur.sys_role_id=r.id
+    <if test="startRow != null and pageSize != null and pageSize != 0">
+      limit #{startRow},#{pageSize}
+    </if>
+  </select>
+  <resultMap id="selSysUser" type="SysUser">
+    <id property="id" column="id"/>
+    <result property="usercode" column="usercode"/>
+    <result property="username" column="username"/>
+    <result property="password" column="password"/>
+    <result property="salt" column="salt"/>
+    <result property="locked" column="locked"/>
+    <collection property="sysRoles"  ofType="SysRole">
+      <id property="id" column="id"/>
+      <result property="name" column="name"/>
+      <result property="available" column="available"/>
+    </collection>
+  </resultMap>
+
+  <!--用户添加-->
+  <select id="checkSysUser" parameterType="java.lang.String" resultType="SysUser">
+    select * from sys_user where usercode=#{usercode}
+  </select>
+    <insert id="addSysUserRole" parameterType="java.util.List"  >
+    insert into sys_user_role(sys_user_id,sys_role_id)
+    values
+     <foreach collection="list" item="m" separator=",">
+    (#{m.sysUserId},#{m.sysRoleId})
+     </foreach>
+    </insert>
+  <select id="selSysUserOne" parameterType="java.lang.String" resultType="SysUserDB">
+    SELECT su.*,sur.* from sys_user su LEFT JOIN sys_user_role sur on su.id=sur.sys_user_id where su.id=#{id} limit 1
+  </select>
+  <!---->
+  <select id="idByUserid" parameterType="java.lang.String" resultType="SysPermission">
+SELECT*from sys_permission WHERE id in(
+SELECT sys_permission_id from sys_role_permission WHERE sys_role_id in(
+select sys_role_id from sys_user_role WHERE sys_role_id=#{sys_role_id}
+)
+)
+  </select>
+  <!--管理员修改角色-->
+  <update id="updateByID" parameterType="SysUserRole">
+    update sys_user_role set sys_role_id=#{sysRoleId} where sys_user_id=#{sysUserId}
+  </update>
+  <update id="changeState" parameterType="SysUser">
+    update sys_user set locked=#{locked} where id=#{id}
+  </update>
+  <!--角色状态修改-->
+  <update id="changeRoleState" parameterType="SysRole">
+    update sys_role set available=#{available} where id=#{id}
+  </update>
+  <!--权限修改-->
+  <insert id="addSysRolePermission" parameterType="java.util.List">
+      INSERT INTO sys_role_permission(sys_role_id,sys_permission_id)
+      VALUES
+      <foreach collection="list" item="srp" separator=",">
+        (#{srp.sysRoleId},#{srp.sysPermissionId})
+      </foreach>
+  </insert>
+<!---->
+  <select id="findRoleAll" resultType="SysRole">
+    select * from sys_role where available=0
+  </select>
+<update id="updatePwd" parameterType="SysUser">
+update sys_user set password=#{password},salt=#{salt} where usercode=#{usercode}
+</update>
+</mapper>
