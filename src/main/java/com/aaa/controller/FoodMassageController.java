@@ -121,7 +121,7 @@ public class FoodMassageController {
         List<MenusDB> order = foodMassageService.foodSel(map);
         MenusVO menusVO = new MenusVO();
         menusVO.setCode(0);
-        menusVO.setCount(count);
+
         menusVO.setData(order);
         return menusVO;
     }
